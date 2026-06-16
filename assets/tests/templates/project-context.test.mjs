@@ -19,8 +19,8 @@ test("声明画像来源为 project-definition.md", () => {
   assert.match(tmpl, /project-definition\.md/);
 });
 
-test("§1 概述保留 PROJECT_OVERVIEW 占位 + 标注从画像生成", () => {
-  assert.match(tmpl, /\{\{PROJECT_OVERVIEW\}\}/);
+test("§1 概述用 OVERVIEW 占位 + 标注从画像生成", () => {
+  assert.match(tmpl, /\{\{OVERVIEW\}\}/);
 });
 
 test("标注未定项（待 scaffold / 追问后补）", () => {

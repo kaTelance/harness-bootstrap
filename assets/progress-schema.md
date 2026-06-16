@@ -8,7 +8,7 @@
 ```
 # Harness 搭建进度
 project: {{PROJECT_NAME}}            | mode: {{MODE}}
-tech_stack: {{TECH_STACK}}           | created: {{DATE}} | updated: {{DATE}}
+tech_stack: {{TECH_STACK_INTENT}}           | created: {{DATE}} | updated: {{DATE}}
 
 ## 能力清单（P1→P8 推荐序，可调）
 - [x] P1 骨架      @{{DATE}}   已搭: CLAUDE.md/AGENTS.md/.harness/L0/progress.md
