@@ -1,24 +1,28 @@
 ---
 project_name: {{PROJECT_NAME}}
-mode: greenfield
+mode: {{MODE}}
 updated: {{DATE}}
 ---
 
 # 项目定义（画像权威源）
 
-> 本文件是 greenfield 首轮问答 + 增量追问累积的**唯一画像来源**。
-> 所有能力的智能填充、所有追问的读写，都经过本文件。
-> `progress.md` 仅存指针指向本文件，不内联画像内容。
+> 所有能力智能填充、所有追问读写的**唯一来源**。`progress.md` 仅存指针指向本文件。
+>
+> **字段状态语义**：值含 `<待` = **未决**（preflight 会拦截，须先追问回写）；其余任何值（含「无」/`N/A`）= **已决**。
+> **依赖图权威源**：`.harness/capability-field-map.json`（preflight 脚本与 SKILL.md Step 0.5 据此校验；下表为其镜像）。
 
-## 首轮（必答）
-- 定位: {{OVERVIEW}}
-- 技术栈意向: {{TECH_STACK_INTENT}}
-- 应用类型: {{APP_TYPE}}
+## 字段清单（闭合；preflight 据「值」列判定已决/未决）
 
-## 首轮（选答）
-- 硬约束: {{HARD_CONSTRAINTS}}（无则填「无」）
+| 字段 | 值 | 来源 | 喂养的能力 |
+|------|-----|------|-----------|
+| project_name | {{PROJECT_NAME}} | 首轮必答 | 全产物占位符 |
+| overview | {{OVERVIEW}} | 首轮必答 | project-context §1 |
+| tech_stack_intent | {{TECH_STACK_INTENT}} | 首轮必答 | project-context §2/§4, P4 探测 |
+| app_type | {{APP_TYPE}} | 首轮必答 | P3 条件闸门 |
+| hard_constraints | {{HARD_CONSTRAINTS}} | 首轮选答·可空（无则「无」）| P5, project-context §5 |
+| primary_language | <待 P5 前追问> | 追问·P5 | P5, P7 |
+| lint_config | <待 P5 前追问> | 追问·P5 | P5, P4 |
+| collab_mode | <待 P6 前追问> | 追问·P6 | P6, P7 |
+| tech_stack_detail | <待 P7 前追问/scaffold 后回填> | 追问·P7 | P7 |
 
-## 追问累积（按能力映射表触发，未答项标 <待 X 前追问>）
-- 协作模式: <待 P6 前追问>
-- lint/格式化配置: <待 P5 前追问>
-- 技术栈细化(版本/运行时): <待 P7 前追问，或用户已 scaffold 后回填>
+<!-- brownfield audit 命中主语言/lint/技术栈细化时，直接把对应 <待…> 替换为实际值，不要重复追问（见 SKILL.md §首次判定）。 -->
