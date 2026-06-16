@@ -23,7 +23,7 @@ metadata:
 
 | P   | 能力     | 产物                                                                                                  |
 | --- | -------- | ----------------------------------------------------------------------------------------------------- |
-| P1  | 骨架     | CLAUDE.md + AGENTS.md + .harness/L0/{ai-behavior,project-context}.md + .harness/progress.md           |
+| P1  | 骨架     | CLAUDE.md + AGENTS.md + .harness/L0/{ai-behavior,project-context}.md + .harness/progress.md + .harness/preflight-profile.mjs + .harness/capability-field-map.json           |
 | P2  | 文档结构 | docs/DOCS_INDEX.md + docs/README.md + docs/superpowers/specs/.gitkeep                                 |
 | P3  | 闸门     | .harness/gates/\*.md + 闸门索引                                                                       |
 | P4  | Hooks    | .claude/settings.json + .harness/hooks/\*.mjs                                                         |
@@ -46,8 +46,23 @@ metadata:
 
 - **不存在** → 首次，执行 §首次判定，搭 P1 骨架，建 progress.md，结束本次。
 - **存在**：
-  - 参数为 `all` → **连续模式**：从第一个 `[ ]` 起，循环执行 Step 1-6 直到全部完成或遇到需用户决策的阻塞点。Step 1 改为「汇总展示剩余能力清单 + 一次性确认」，确认后连续推进，遇产物已存在则按幂等规则跳过。
+  - 参数为 `all` → **连续模式**：从第一个 `[ ]` 起，循环执行 Step 1-6 直到全部完成或遇到需用户决策的阻塞点。Step 1 改为「汇总展示剩余能力清单 + 一次性确认」，确认后连续推进，遇产物已存在则按幂等规则跳过。**连续模式每轮搭建前 MUST 先过 Step 0.5 preflight**（遇 block 单点暂停补问，补完续跑）。
   - 否则 → 解析目标能力（第一个 `[ ]` 或用户指定的 P{n}），进入 Step 1（单步）。
+
+### Step 0.5: 画像装配 preflight（每次必跑，含连续模式每轮）
+
+Step 0 解析出目标能力后、Step 1 之前，跑机械校验（机械牙齿，不靠记忆）：
+
+```
+node .harness/preflight-profile.mjs <目标 P{n}|all>
+```
+
+- **退出码 0**（ready）→ 进入 Step 1。
+- **退出码 1**（BLOCK）→ 末行 JSON `{ready:false, missing:[...]}` 列出未决字段。按 §增量追问逐项补到 `.harness/project-definition.md`（选项型用 AskUserQuestion ≤4 选项+Other；开放型用普通对话），**回写后再跑 preflight 直到 0**，方可进入 Step 1。
+- **连续（`all`）模式**：每轮搭建前都跑 preflight；遇 block 即在该能力处暂停补问，补完继续——不跳过、不臆测。也可先跑 `preflight … all` 一次性批量预问，减少逐轮打断。
+- **`.harness/project-definition.md` 不存在** → 视为首次，走 §首次判定搭 P1（P1 无追问依赖，preflight 放行）。
+
+> preflight 与依赖图（`capability-field-map.json`）均在 P1 生成到 `.harness/`。断点续传跨会话都能复跑校验。
 
 ### Step 1: 确认目标能力
 
@@ -57,6 +72,7 @@ metadata:
 
 读取 `assets/templates/` 下对应模板 → 替换 `{{VAR}}`（用项目画像）→ Write 到目标位置。
 **Write 前必须检查目标存在性**（见 Guardrails 幂等规则）。
+**P1 专属**：额外把静态文件 `preflight-profile.mjs` + `capability-field-map.json`（无 `{{VAR}}`）从 `assets/templates/harness/` **原样复制**到 `.harness/`。
 
 ### Step 3: 智能填充
 
@@ -104,6 +120,8 @@ metadata:
 
 画像写入 `.harness/project-definition.md`（progress.md 仅存指针）。brownfield audit 结果同样写入该文件。
 
+**brownfield audit → manifest 键映射**：audit 命中结果按下表写入 `.harness/project-definition.md` 对应字段（替换 `<待…>`，不重复追问）：主语言/框架 → `primary_language`；格式化/lint → `lint_config`；技术栈细化（版本/运行时）→ `tech_stack_detail`；单人/团队 → `collab_mode`。
+
 **判定兜底**：两个信号均为否（无 `.git` 提交、无源码/manifest）→ **greenfield**。
 
 ---
@@ -125,6 +143,9 @@ metadata:
 ---
 
 ## 增量追问（按能力映射表驱动，每次搭建前）
+
+> **权威源**：`.harness/capability-field-map.json`（preflight 脚本据此校验）。下表为镜像，如有出入以 JSON 为准。
+> 追问流程已并入 **Step 0.5 preflight**：preflight 报 block → 按下表所需字段追问 → 回写 → 复跑 preflight。
 
 搭每个能力前，读 `.harness/project-definition.md`，查下表所需字段；**缺失项（标 `<待…>`）未补全前不得搭建该能力**。选项型字段（如协作模式）可用 AskUserQuestion（≤4 选项 + Other）；开放型字段用普通对话。回写画像后再搭建。
 
