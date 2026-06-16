@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "purpose": "能力→所需画像字段 依赖图。preflight-profile.mjs 与 SKILL.md Step 0.5 据此校验。本文件为权威源；SKILL.md 内表格为其镜像。",
+    "status_semantics": "<待…> = 未决（须追问回写）；其余任何值（含「无」/N/A）= 已决",
+    "shipped_to": ".harness/capability-field-map.json"
+  },
+  "capabilities": {
+    "P1": { "requires": [], "notes": "骨架；首轮问答在搭 P1 前已完成" },
+    "P2": { "requires": [], "notes": "文档结构，无画像依赖" },
+    "P3": { "requires": ["app_type"], "notes": "应用类型决定是否生成 UI/平台条件闸门" },
+    "P4": { "requires": [], "notes": "通用 hooks" },
+    "P5": { "requires": ["primary_language", "lint_config", "hard_constraints"], "notes": "主语言/lint 决定编码规范与 auto-format/auto-check" },
+    "P6": { "requires": ["collab_mode"], "notes": "协作模式决定提交协作严格度" },
+    "P7": { "requires": ["tech_stack_detail", "app_type", "collab_mode"], "notes": "领域专家画像" },
+    "P8": { "requires": [], "notes": "OpenSpec，无画像依赖" }
+  }
+}
