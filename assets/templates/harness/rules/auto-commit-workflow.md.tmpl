@@ -1,0 +1,67 @@
+# 自动提交工作流（WIP + Squash）
+
+> 定义两层提交模型。配合 commit-conventions.md 使用。
+
+---
+
+## 两层模型
+
+- **WIP 层**：每完成一个 task 创建 `wip:` 前缀临时 commit，保进度、防崩溃丢失。
+- **Clean 层**：所有 tasks 完成后，将 wip commits squash 为 1-3 个语义清晰的 conventional commit。
+
+---
+
+## 提交规则
+
+1. commit 前必须运行该任务相关验证（测试 / 编译 / 类型），确认通过。
+2. commit 前必须检查 `git status --short` 或 `git diff`。
+3. 只 stage 当前任务相关文件；禁止混入无关改动。
+4. 同 scope 连续修复使用 `--amend`，不新建 wip commit。
+5. bug fix 必须完成冷却期（G9）后才可 commit。
+6. 禁止自动 `git push`。push 只由用户手动操作。
+
+---
+
+## WIP commit
+
+```bash
+git add <当前任务相关文件>
+git commit -m "wip: <task 简述>"
+```
+
+---
+
+## Squash 流程（所有 tasks 完成后）
+
+`git rebase -i` 是交互式编辑器流程，AI 通过 Bash 执行会卡在编辑器。**改用 `git reset --soft` 非交互完成**：
+
+1. **确认基点**：基点 = 本 change 开始前的 commit（如 `git merge-base HEAD @{u}`，或提前记录的基点 hash）。
+
+2. **软重置到基点**：
+
+   ```bash
+   git reset --soft <基点>
+   ```
+
+   这把基点之后所有 wip commit 的改动合并回暂存区，不丢失任何文件改动。
+
+3. **按语义分组提交 1-3 个 conventional commit**：
+
+   ```bash
+   git reset                       # 撤出暂存区，便于分组
+   git add <语义组1相关文件>
+   git commit -m "feat(scope): <语义1>"
+   git add <语义组2相关文件>
+   git commit -m "fix(scope): <语义2>"
+   ```
+
+4. **验证**：`git log --oneline <基点>..HEAD` 确认历史清晰（1-3 个语义 commit）。
+
+5. **等待用户手动 push**（不自动 push）。
+
+> 若确需交互式 rebase，必须用非交互编辑器，例如：
+>
+> - `GIT_SEQUENCE_EDITOR=true git rebase -i <基点>`（接受默认）
+> - `GIT_SEQUENCE_EDITOR="sed -i.bak '2,\$s/^pick/squash/'" git rebase -i <基点>`（自动 squash 第 2 个起）
+>
+> 不带 `GIT_SEQUENCE_EDITOR` 直接跑 `git rebase -i` 会卡死。

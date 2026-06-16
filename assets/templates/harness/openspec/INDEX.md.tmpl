@@ -1,0 +1,36 @@
+# OpenSpec 索引
+
+> {{PROJECT_NAME}} 的 OpenSpec 规范分组索引。所有 spec / change 查找入口。
+
+## Capability Specs
+
+<!-- INTELLIGENT-FILL: 列出 .harness/openspec/specs/<capability>/spec.md，每个一行。
+     初始为空，随 change 归档时由 /opsx:archive 更新。 -->
+
+| Capability | 描述 | 文件 |
+| ---------- | ---- | ---- |
+| _（暂无）_ |      |      |
+
+## 进行中 Changes
+
+<!-- INTELLIGENT-FILL: 列出 .harness/openspec/changes/<name>/（非 archive），每个一行含 tasks 进度。 -->
+
+| Change | 进度 | 位置 |
+| ------ | ---- | ---- |
+| _（暂无）_ |     |      |
+
+## 归档 Changes
+
+<!-- INTELLIGENT-FILL: 列出 .harness/openspec/changes/archive/YYYY-MM-DD-<name>/，按时间倒序。 -->
+
+## 依赖关系
+
+<!-- INTELLIGENT-FILL: 如有 capability 间依赖，记录依赖图。 -->
+
+## 约定
+
+- spec 事实源：`.harness/openspec/specs/<capability>/spec.md`
+- 变更提案：`.harness/openspec/changes/<name>/`
+- 归档：`.harness/openspec/changes/archive/YYYY-MM-DD-<name>/`
+- 命名：capability 和 change 用 kebab-case。
+- 工作流：`new` → `propose` → `apply` → `verify` → `archive`（小改用 `ff`）。

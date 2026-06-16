@@ -1,0 +1,56 @@
+# {{PROJECT_NAME}} - 项目上下文（L0-P 宪法层）
+
+> 与 `.harness/L0/ai-behavior.md`（L0-A）共同构成 L0 宪法层。
+>
+> **画像来源**：`.harness/project-definition.md`（greenfield 首轮问答 + 增量追问累积的权威源）。本文件由 P1 从画像生成；画像中尚未确定的项标注「待 scaffold / 追问后补」，项目 scaffold 后回填。
+
+---
+
+## §1 项目概述
+
+{{PROJECT_OVERVIEW}}
+
+<!-- INTELLIGENT-FILL: 一句话定位来自 .harness/project-definition.md 首轮问答；应用类型/技术栈意向同源。greenfield 未 scaffold 时项目结构为意向，标「待 scaffold 后补」。brownfield 从 README/manifest 推断后让用户确认。 -->
+
+---
+
+## §2 技术栈
+
+<!-- INTELLIGENT-FILL: 按画像生成技术栈表（层级 | 技术 | 版本）。brownfield 从 manifest 提取真实版本。 -->
+
+---
+
+## §3 项目结构
+
+<!-- INTELLIGENT-FILL: 按实际目录树生成（brownfield 扫描；greenfield 用意向结构）。标注关键目录职责。 -->
+
+---
+
+## §4 编码规范
+
+<!-- INTELLIGENT-FILL: 按主语言生成（TS/Python/Rust/Go/Java 等）。参考画像的 lint/格式化配置。 -->
+
+---
+
+## §5 性能/质量预算（可选）
+
+<!-- INTELLIGENT-FILL: 若画像识别到性能敏感场景，生成预算表；否则删除本节。 -->
+
+---
+
+## §6 语言与沟通规范
+
+- **中文**：所有沟通、文档、commit 描述体（前缀英文）。
+- **英文**：代码命名、技术术语、命令/路径。
+
+---
+
+## §7 信息来源优先级
+
+| Tier | 来源 | 何时查阅 |
+|------|------|---------|
+| Tier 1 | `.harness/` 宪法层 | 每次会话自动加载 |
+| Tier 2 | `.harness/openspec/specs/` + 当前 change | 编码/计划/验证时 |
+| Tier 3 | `docs/`（入口 `docs/DOCS_INDEX.md`） | 需求澄清、产品全景 |
+
+冲突解决：spec 与 docs 不一致时，以 spec 为准。

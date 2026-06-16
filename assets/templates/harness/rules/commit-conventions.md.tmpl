@@ -1,0 +1,63 @@
+# 提交信息规范
+
+> Conventional Commits + 正文字数限制。配合 auto-commit-workflow.md 使用。
+
+---
+
+## 格式
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+---
+
+## type
+
+| type     | 用途                     |
+| -------- | ------------------------ |
+| feat     | 新功能                   |
+| fix      | bug 修复                 |
+| docs     | 文档                     |
+| style    | 格式（不影响代码逻辑）   |
+| refactor | 重构（非 feat / 非 fix） |
+| test     | 测试                     |
+| chore    | 构建 / 工具 / 依赖       |
+| perf     | 性能优化                 |
+| ci       | CI 配置                  |
+
+---
+
+## 规则
+
+- **subject**：祈使句，首字母不大写，无句号，≤ 72 字符。
+- **body**：解释「为什么」（非「是什么」），每行 ≤ 100 字符。
+- **scope**：可选，受影响的模块。
+- **footer**：`BREAKING CHANGE:` 说明 / `Closes #issue`。
+
+---
+
+## 示例
+
+```
+feat(auth): 支持 OAuth2 登录
+
+- 新增 OAuth2 provider 抽象层
+- 集成 Google / GitHub provider
+- 迁移旧 session 到新结构
+
+Closes #123
+```
+
+---
+
+## 禁止
+
+- 禁止模糊 message（"fix bug"、"update"、"wip final"、"misc"）。
+- 禁止混入无关改动到一个 commit。
+- 禁止 body 单行超 100 字符。
+- 禁止自动 push。

@@ -1,0 +1,56 @@
+# 闸门索引
+
+> 所有质量闸门的入口。闸门不可跳过，涉及代码修改必须按执行顺序逐条过。
+
+---
+
+## 核心闸门（所有项目）
+
+| #    | 闸门              | 触发时机                          | 文件                              |
+| ---- | ----------------- | --------------------------------- | --------------------------------- |
+| G1   | 需求清晰度        | propose / apply / 计划前          | G1-requirements-clarity.md        |
+| G2   | 实施计划质量      | 产出 plan / tasks 前              | G2-plan-quality.md                |
+| G3   | Plan-to-Apply 检查站 | G2 通过后、apply 前            | G3-plan-to-apply-checkpoint.md    |
+| G4   | 影响评估          | 修改已有代码前                    | G4-impact-assessment.md           |
+| G5   | 代码影响深度审查  | 修改已有函数前                    | G5-code-impact-review.md          |
+| G6   | 架构延续          | 任何代码 / 文档变更               | G6-architecture-continuity.md     |
+| G7   | 实施执行质量      | apply 阶段                        | G7-apply-quality.md               |
+| G8   | 重构安全          | 状态迁移 / 事件链路 / 盒模型重构  | G8-refactoring-safety.md          |
+| G9   | BugFix 验证       | 每次 bug fix                      | G9-bugfix-protocol.md             |
+| G10  | 重复修复升级      | 同一 bug 第 2 次失败              | G10-repeat-fix-escalation.md      |
+| G11  | Harness 治理      | 改 `.harness/` 治理文件 / 入口文件 | G11-harness-governance.md         |
+| G12  | Hook 反馈闭环     | hook 反馈 / 闸门不通过            | G12-hook-feedback-loop.md         |
+
+---
+
+## 条件闸门（按项目画像启用）
+
+<!-- INTELLIGENT-FILL: 根据项目画像启用对应条件闸门，删除不适用的行。无 UI / 单平台 / 无设计系统则整段删除。 -->
+
+| #   | 闸门           | 启用条件        | 文件                   |
+| --- | -------------- | --------------- | ---------------------- |
+| -   | UI 原型确认    | 有 UI 的项目    | cond-ui-design.md      |
+| -   | 平台规则       | 跨平台项目      | cond-platform.md       |
+| -   | 设计规范同步   | 有设计系统      | cond-design-system.md  |
+
+---
+
+## 执行顺序
+
+```
+典型编码任务：G1 → G2 → G3 → G4 → G5 → G7
+                （G6 全程伴随；G8 如涉及重构；G9 如涉及 bugfix）
+
+修改治理文件：G11
+
+hook 反馈：G12
+```
+
+---
+
+## 强制执行声明
+
+- 闸门不可跳过，「改动很小」不构成豁免。
+- 豁免条件在各闸门文件中定义，满足时必须声明具体豁免原因。
+- 跳过闸门 = 触发 G12 Hook 反馈闭环。
+- 所有闸门执行前 MUST 先读 `.harness/ANTI_PATTERNS.md` 对照已知反模式。

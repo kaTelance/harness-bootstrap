@@ -1,0 +1,66 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.harness/hooks/session-gate-reminder.mjs\"",
+            "timeoutMs": 10000
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.harness/hooks/protect-harness-files.mjs\"",
+            "timeoutMs": 5000
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.harness/hooks/impact-assess-guard.mjs\"",
+            "timeoutMs": 5000
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.harness/hooks/plan-to-apply-checkpoint.mjs\"",
+            "timeoutMs": 5000
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.harness/hooks/block-dangerous-cmds.mjs\"",
+            "timeoutMs": 5000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.harness/hooks/auto-format.mjs\"",
+            "timeoutMs": 15000
+          },
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.harness/hooks/auto-check.mjs\"",
+            "async": true,
+            "timeoutMs": 120000
+          }
+        ]
+      }
+    ]
+  }
+}
