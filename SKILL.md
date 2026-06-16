@@ -161,6 +161,17 @@ node .harness/preflight-profile.mjs <目标 P{n}|all>
 
 ---
 
+## 边界与失败模式
+
+| 场景 | 行为 |
+|------|------|
+| **跳序直搭**（`/harness-bootstrap P7`）| Step 0.5 preflight 按 P7 依赖图拦截；缺啥问啥，回写后复跑，不硬搭。 |
+| **greenfield 未 scaffold 就到 P7** | `tech_stack_detail` 标 `<待 scaffold 后回填>`，preflight 报 block → 暂停，提示用户先 scaffold 或手填意向版本。 |
+| **连续模式遇 `<待…>`** | Step 0.5 单点暂停补问，补完续跑；不跳过、不臆测。 |
+| **画像被损坏** | 走 progress-schema 画像容错条款：git 反推 + 逐字段确认，不臆测。 |
+| **preflight/map 缺失** | 提示重新生成 P1（P1 负责落 preflight + map 到 `.harness/`）。 |
+
+---
 ## Guardrails（铁律）
 
 - **禁止**产物溢出 5 处根级位置（CLAUDE.md/AGENTS.md/.claude/.harness/docs）之外。

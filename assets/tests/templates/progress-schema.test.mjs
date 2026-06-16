@@ -30,3 +30,8 @@ test("per-[x] 行含构建溯源（画像版本 + 依赖字段）", () => {
 test("声明画像变更触发重校验", () => {
   assert.match(tmpl, /重校验|stale/s);
 });
+
+test("声明 project-definition.md 损坏的容错策略（不臆测）", () => {
+  assert.match(tmpl, /画像容错/);
+  assert.match(tmpl, /不臆测/);
+});

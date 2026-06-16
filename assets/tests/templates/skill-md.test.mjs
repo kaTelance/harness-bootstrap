@@ -73,3 +73,7 @@ test("P1 产物含 preflight + map 并声明复制", () => {
   assert.match(tmpl, /capability-field-map\.json/);
   assert.match(tmpl, /原样复制|复制到\s*`?\.harness/);
 });
+
+test("含边界与失败模式小节", () => {
+  assert.match(tmpl, /##.*边界与失败模式/);
+});
