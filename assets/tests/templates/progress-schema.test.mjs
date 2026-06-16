@@ -21,3 +21,12 @@ test("画像段引用 project-definition.md 作为权威源", () => {
 test("不再内联 {{PROJECT_PROFILE}} 占位符", () => {
   assert.doesNotMatch(tmpl, /\{\{PROJECT_PROFILE\}\}/);
 });
+
+test("per-[x] 行含构建溯源（画像版本 + 依赖字段）", () => {
+  assert.match(tmpl, /画像v|PROFILE_DATE/i);
+  assert.match(tmpl, /字段:\s*\[/);
+});
+
+test("声明画像变更触发重校验", () => {
+  assert.match(tmpl, /重校验|stale/s);
+});
