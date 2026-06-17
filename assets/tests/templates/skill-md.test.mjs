@@ -97,12 +97,12 @@ test("P1 产物含 base-skills 机械（清单+脚本+payload）", () => {
   assert.match(tmpl, /base-skills\/smart-advisor/);
 });
 
-test("P1 末尾跑 ensure 首装（首搭即落 .claude/skills/）", () => {
-  assert.match(tmpl, /复制完成后跑|P1 末尾跑/);
+test("P1 复制完成后跑 ensure 首装（首搭即落 .claude/skills/）", () => {
+  assert.match(tmpl, /复制完成后跑/);
   assert.match(tmpl, /\.claude\/skills\/smart-advisor/);
 });
 
 test("边界表含基础 skill 三场景（已存在/机械缺失/payload 缺失）", () => {
-  assert.match(tmpl, /已存在[\s\S]{0,60}跳过/);
+  assert.match(tmpl, /已存在[\s\S]{0,30}ensure 跳过/);
   assert.match(tmpl, /payload 缺失|基础层机械缺失/);
 });
