@@ -1,0 +1,10 @@
+{
+  "_meta": {
+    "purpose": "项目基础 skill 清单。ensure-base-skills.mjs 据此把每个 skill 从 .harness/<source>/ 复制到 .claude/skills/<name>/。",
+    "shipped_to": ".harness/base-skills.json",
+    "idempotency": "缺失→复制；在场→不碰（纯幂等，尊重用户定制）"
+  },
+  "skills": [
+    { "name": "smart-advisor", "source": "base-skills/smart-advisor" }
+  ]
+}
