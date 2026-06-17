@@ -23,7 +23,7 @@ metadata:
 
 | P   | 能力     | 产物                                                                                                  |
 | --- | -------- | ----------------------------------------------------------------------------------------------------- |
-| P1  | 骨架     | CLAUDE.md + AGENTS.md + .harness/L0/{ai-behavior,project-context}.md + .harness/progress.md + .harness/preflight-profile.mjs + .harness/capability-field-map.json           |
+| P1  | 骨架     | CLAUDE.md + AGENTS.md + .harness/L0/{ai-behavior,project-context}.md + .harness/progress.md + .harness/preflight-profile.mjs + .harness/capability-field-map.json + .harness/base-skills.json + .harness/ensure-base-skills.mjs + .harness/base-skills/smart-advisor/（→ 经 ensure 落 .claude/skills/smart-advisor/）           |
 | P2  | 文档结构 | docs/DOCS_INDEX.md + docs/README.md + docs/superpowers/specs/.gitkeep                                 |
 | P3  | 闸门     | .harness/gates/\*.md + 闸门索引                                                                       |
 | P4  | Hooks    | .claude/settings.json + .harness/hooks/\*.mjs                                                         |
@@ -39,6 +39,20 @@ metadata:
 ---
 
 ## 执行流程（每次 `/harness-bootstrap [可选 P{n}|all]`）
+
+### Step 0 前置：基础 skill 层确保（substrate，每次最前置）
+
+判定模式前先确保项目自带基础 skill。读 `.harness/ensure-base-skills.mjs` 与 `.harness/progress.md` 是否存在，分三态：
+
+1. **脚本存在**（正常续跑 / 已 bootstrap 项目）→ `node .harness/ensure-base-skills.mjs`（幂等：遍历 `.harness/base-skills.json`，缺的 skill 从 `.harness/base-skills/<source>/` 复制到 `.claude/skills/<name>/`，在场的跳过）。
+2. **脚本不存在 且 progress.md 不存在**（fresh 首调）→ 静默跳过本前置（`.harness/` 尚未生成是正常的）；首装交给 P1 末尾的 ensure。
+3. **脚本不存在 但 progress.md 存在**（老项目，P1 早于本特性搭建过）→ 同 preflight/map 缺失：提示「基础层机械缺失，建议重跑 P1 幂等补全」，补完续行。
+
+- 缺失的基础 skill → 从 `.harness/base-skills/` 复制到 `.claude/skills/`。
+- 在场 → 跳过（不碰用户定制/旧版）。
+- 连续（`all`）模式只在循环外跑一次（幂等，无需每轮）。
+
+> 基础 skill 是 substrate，**不计 progress.md 能力 checkbox**；清单与脚本由 P1 落到 `.harness/`（见 Step 2 P1 专属）。
 
 ### Step 0: 判定模式
 
@@ -72,7 +86,7 @@ node .harness/preflight-profile.mjs <目标 P{n}|all>
 
 读取 `assets/templates/` 下对应模板 → 替换 `{{VAR}}`（用项目画像）→ Write 到目标位置。
 **Write 前必须检查目标存在性**（见 Guardrails 幂等规则）。
-**P1 专属**：额外把静态文件 `preflight-profile.mjs` + `capability-field-map.json`（无 `{{VAR}}`）从 `assets/templates/harness/` **原样复制**到 `.harness/`。
+**P1 专属**：额外把静态文件 `preflight-profile.mjs` + `capability-field-map.json` + `base-skills.json` + `ensure-base-skills.mjs` + `base-skills/smart-advisor/`（均无 `{{VAR}}`）从 `assets/templates/harness/` **原样复制**到 `.harness/`；复制完成后跑一次 `node .harness/ensure-base-skills.mjs` → 首搭即落 `.claude/skills/smart-advisor/`。
 
 ### Step 3: 智能填充
 
@@ -170,6 +184,9 @@ node .harness/preflight-profile.mjs <目标 P{n}|all>
 | **连续模式遇 `<待…>`** | Step 0.5 单点暂停补问，补完续跑；不跳过、不臆测。 |
 | **画像被损坏** | 走 progress-schema 画像容错条款：git 反推 + 逐字段确认，不臆测。 |
 | **preflight/map 缺失** | 提示重新生成 P1（P1 负责落 preflight + map 到 `.harness/`）。 |
+| **`.claude/skills/smart-advisor/` 已存在** | ensure 跳过（不碰，尊重定制/旧版）；要刷新需用户手动删除后重跑。 |
+| **老项目缺 `.harness/ensure-base-skills.mjs` 或 `base-skills.json`** | 同 preflight/map 缺失：Step 0 前置检测到 → 提示按 P1 幂等补全（补清单+脚本+payload），补完续行。 |
+| **`.harness/base-skills/smart-advisor/` payload 缺失** | ensure 非致命告警（不阻塞其它 P 步骤，退出码 0），提示重跑 P1。 |
 
 ---
 ## Guardrails（铁律）
