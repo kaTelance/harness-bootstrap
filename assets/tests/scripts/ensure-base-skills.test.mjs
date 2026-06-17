@@ -103,3 +103,36 @@ test("末行 JSON 摘要含 installed/skipped/missing_payload 数组", () => {
   assert.ok(Array.isArray(j.missing_payload));
   rmSync(dir, { recursive: true, force: true });
 });
+
+test("清单条目畸形（缺 name/source）→ 告警跳过，不崩溃，退出 0", () => {
+  const dir = mkdtempSync(join(tmpdir(), "malformed-"));
+  mkdirSync(join(dir, ".harness", "base-skills", "demo"), { recursive: true });
+  writeFileSync(
+    join(dir, ".harness", "base-skills.json"),
+    JSON.stringify({ skills: [{ source: "base-skills/demo" }, { name: "demo" }] }),
+  );
+  writeFileSync(join(dir, ".harness", "base-skills", "demo", "SKILL.md"), FIXTURE_PAYLOAD);
+  const r = run(dir);
+  assert.equal(r.code, 0, "畸形条目不应让进程崩溃");
+  const last = r.out.trim().split("\n").pop();
+  const j = JSON.parse(last);
+  // 两个畸形条目都被跳过，不进任何结果数组
+  assert.deepEqual(j.installed, []);
+  assert.deepEqual(j.skipped, []);
+  assert.deepEqual(j.missing_payload, []);
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test("skills 非数组 → 退出 0，空处理（既有守卫，锁定行为）", () => {
+  const dir = mkdtempSync(join(tmpdir(), "nonarray-"));
+  mkdirSync(join(dir, ".harness"), { recursive: true });
+  writeFileSync(join(dir, ".harness", "base-skills.json"), JSON.stringify({ skills: "not-an-array" }));
+  const r = run(dir);
+  assert.equal(r.code, 0);
+  const last = r.out.trim().split("\n").pop();
+  const j = JSON.parse(last);
+  assert.deepEqual(j.installed, []);
+  assert.deepEqual(j.skipped, []);
+  assert.deepEqual(j.missing_payload, []);
+  rmSync(dir, { recursive: true, force: true });
+});

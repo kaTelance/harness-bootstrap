@@ -43,6 +43,10 @@ const skipped = [];
 const missing_payload = [];
 
 for (const s of skills) {
+  if (!s || typeof s.name !== "string" || typeof s.source !== "string") {
+    console.error(`[ensure-base-skills] 告警：清单条目非法（${JSON.stringify(s)}），跳过。`);
+    continue;
+  }
   const { name, source } = s;
   const target = join(skillsDir, name);
   const src = join(harnessDir, source);
